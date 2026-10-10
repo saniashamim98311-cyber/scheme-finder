@@ -1,3 +1,5 @@
 scheme_id,field,operator,value
 1,category,in,SC
 1,income,<=,800000
+2,category,in,SC
+2,income,<=,250000
