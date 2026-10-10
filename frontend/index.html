@@ -5,43 +5,162 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Scholarship Finder</title>
 <style>
-body{font-family:system-ui,sans-serif;margin:0;padding:16px;background:#f7f7f9;color:#222}
-.card{max-width:520px;margin:auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
-h1{font-size:22px;margin-top:0}
-label{display:block;margin:12px 0 4px;font-weight:600}
-input,select{width:100%;padding:10px;font-size:16px;border:1px solid #ccc;border-radius:8px;box-sizing:border-box}
-button{width:100%;margin-top:18px;padding:12px;font-size:16px;background:#0a66c2;color:#fff;border:0;border-radius:8px}
-button:disabled{opacity:.6}
-.scheme{border-top:1px solid #eee;padding-top:12px;margin-top:12px}
-.msg{margin-top:14px;color:#555}
+  :root {
+    --blue: #0a66c2;
+    --ink: #1d2433;
+    --muted: #5b6475;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    background: linear-gradient(135deg, #e0f2fe 0%, #ede9fe 50%, #fce7f3 100%);
+    padding: 16px;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  header { text-align: center; padding: 18px 8px 8px; }
+  header h1 { margin: 0; font-size: 26px; color: var(--ink); }
+  header p { margin: 6px 0 0; color: var(--muted); font-size: 15px; }
+  .card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(30, 41, 59, 0.08);
+    margin-top: 16px;
+  }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .full { grid-column: 1 / -1; }
+  label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 4px; color: var(--ink); }
+  input, select {
+    width: 100%;
+    padding: 11px 12px;
+    font-size: 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background: #fff;
+  }
+  input:focus, select:focus { outline: 2px solid #93c5fd; border-color: transparent; }
+  button {
+    width: 100%;
+    margin-top: 18px;
+    padding: 14px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(90deg, #0a66c2, #7c3aed);
+    border: 0;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+  button:disabled { opacity: .6; cursor: wait; }
+  #out { margin-top: 4px; }
+  .status { margin-top: 14px; color: var(--muted); text-align: center; font-size: 15px; }
+  .scheme {
+    border-left: 5px solid #7c3aed;
+    background: #faf5ff;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-top: 14px;
+  }
+  .scheme h3 { margin: 0 0 8px; font-size: 17px; color: var(--ink); }
+  .benefit {
+    display: inline-block;
+    background: #dcfce7;
+    color: #166534;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .scheme p { margin: 6px 0; font-size: 14px; color: var(--muted); line-height: 1.5; }
+  .scheme a {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--blue);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .scheme a:hover { text-decoration: underline; }
+  .note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 16px; }
+  @media (max-width: 420px) {
+    .grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
-<div class="card">
-<h1>Scholarship Finder (West Bengal)</h1>
-<form id="f">
-<label>Age</label><input name="age" type="number" required>
-<label>Gender</label>
-<select name="gender"><option>female</option><option>male</option><option>other</option></select>
-<label>State</label><input name="state" value="West Bengal" required>
-<label>Category</label>
-<select name="category"><option>SC</option><option>ST</option><option>OBC</option><option>General</option></select>
-<label>Annual family income (Rs)</label><input name="income" type="number" required>
-<label>Occupation</label><input name="occupation" value="student">
-<button id="btn" type="submit">Find schemes</button>
-</form>
-<div id="out" class="msg"></div>
+<div class="wrap">
+  <header>
+    <h1>🎓 Scholarship Finder</h1>
+    <p>Find scholarships you may be eligible for in West Bengal</p>
+  </header>
+
+  <div class="card">
+    <form id="f">
+      <div class="grid">
+        <div>
+          <label for="age">Age</label>
+          <input id="age" name="age" type="number" min="1" required>
+        </div>
+        <div>
+          <label for="gender">Gender</label>
+          <select id="gender" name="gender">
+            <option>female</option>
+            <option>male</option>
+            <option>other</option>
+          </select>
+        </div>
+        <div>
+          <label for="state">State</label>
+          <input id="state" name="state" value="West Bengal" required>
+        </div>
+        <div>
+          <label for="category">Category</label>
+          <select id="category" name="category">
+            <option>SC</option>
+            <option>ST</option>
+            <option>OBC</option>
+            <option>General</option>
+          </select>
+        </div>
+        <div class="full">
+          <label for="income">Annual family income (Rs)</label>
+          <input id="income" name="income" type="number" min="0" required>
+        </div>
+        <div class="full">
+          <label for="occupation">Occupation</label>
+          <input id="occupation" name="occupation" value="student">
+        </div>
+      </div>
+      <button id="btn" type="submit">Find schemes</button>
+    </form>
+    <div id="out"></div>
+  </div>
+
+  <p class="note">Always confirm eligibility and deadlines on the official scheme website before applying.</p>
 </div>
+
 <script>
 const API = "https://scheme-finder-vwxv.onrender.com/match";
 const f = document.getElementById("f");
 const out = document.getElementById("out");
 const btn = document.getElementById("btn");
 
+function setStatus(text) {
+  out.innerHTML = "";
+  const p = document.createElement("p");
+  p.className = "status";
+  p.textContent = text;
+  out.appendChild(p);
+}
+
 f.addEventListener("submit", async (e) => {
   e.preventDefault();
   btn.disabled = true;
-  out.textContent = "Checking... (the first search can take up to a minute)";
+  setStatus("Checking... (the first search can take up to a minute)");
   const data = Object.fromEntries(new FormData(f).entries());
   try {
     const r = await fetch(API, {
@@ -51,30 +170,35 @@ f.addEventListener("submit", async (e) => {
     });
     if (!r.ok) throw new Error("server returned " + r.status);
     const j = await r.json();
-    out.textContent = "";
+    out.innerHTML = "";
     if (!j.matches.length) {
-      out.textContent = "No matching schemes found for these details.";
+      setStatus("No matching schemes found for these details.");
       return;
     }
+    const heading = document.createElement("p");
+    heading.className = "status";
+    heading.textContent = j.matches.length + " scheme(s) may match you";
+    out.appendChild(heading);
     j.matches.forEach(s => {
       const d = document.createElement("div");
       d.className = "scheme";
-      const h = document.createElement("strong");
+      const h = document.createElement("h3");
       h.textContent = s.name;
-      const b = document.createElement("p");
+      const b = document.createElement("span");
+      b.className = "benefit";
       b.textContent = s.benefit;
       const docs = document.createElement("p");
-      docs.textContent = "Documents: " + s.documents;
+      docs.textContent = "Documents needed: " + s.documents;
       const a = document.createElement("a");
       a.href = s.apply_link;
       a.target = "_blank";
       a.rel = "noopener";
-      a.textContent = "Apply here";
+      a.textContent = "Apply here →";
       d.append(h, b, docs, a);
       out.appendChild(d);
     });
   } catch (err) {
-    out.textContent = "Something went wrong (" + err.message + "). Please try again.";
+    setStatus("Something went wrong (" + err.message + "). Please try again.");
   } finally {
     btn.disabled = false;
   }
