@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scholarship Finder</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:0;padding:16px;background:#f7f7f9;color:#222}
+.card{max-width:520px;margin:auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+h1{font-size:22px;margin-top:0}
+label{display:block;margin:12px 0 4px;font-weight:600}
+input,select{width:100%;padding:10px;font-size:16px;border:1px solid #ccc;border-radius:8px;box-sizing:border-box}
+button{width:100%;margin-top:18px;padding:12px;font-size:16px;background:#0a66c2;color:#fff;border:0;border-radius:8px}
+button:disabled{opacity:.6}
+.scheme{border-top:1px solid #eee;padding-top:12px;margin-top:12px}
+.msg{margin-top:14px;color:#555}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>Scholarship Finder (West Bengal)</h1>
+<form id="f">
+<label>Age</label><input name="age" type="number" required>
+<label>Gender</label>
+<select name="gender"><option>female</option><option>male</option><option>other</option></select>
+<label>State</label><input name="state" value="West Bengal" required>
+<label>Category</label>
+<select name="category"><option>SC</option><option>ST</option><option>OBC</option><option>General</option></select>
+<label>Annual family income (Rs)</label><input name="income" type="number" required>
+<label>Occupation</label><input name="occupation" value="student">
+<button id="btn" type="submit">Find schemes</button>
+</form>
+<div id="out" class="msg"></div>
+</div>
+<script>
+const API = "https://scheme-finder-vwxv.onrender.com/match";
+const f = document.getElementById("f");
+const out = document.getElementById("out");
+const btn = document.getElementById("btn");
+
+f.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  btn.disabled = true;
+  out.textContent = "Checking... (the first search can take up to a minute)";
+  const data = Object.fromEntries(new FormData(f).entries());
+  try {
+    const r = await fetch(API, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(data)
+    });
+    if (!r.ok) throw new Error("server returned " + r.status);
+    const j = await r.json();
+    out.textContent = "";
+    if (!j.matches.length) {
+      out.textContent = "No matching schemes found for these details.";
+      return;
+    }
+    j.matches.forEach(s => {
+      const d = document.createElement("div");
+      d.className = "scheme";
+      const h = document.createElement("strong");
+      h.textContent = s.name;
+      const b = document.createElement("p");
+      b.textContent = s.benefit;
+      const docs = document.createElement("p");
+      docs.textContent = "Documents: " + s.documents;
+      const a = document.createElement("a");
+      a.href = s.apply_link;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = "Apply here";
+      d.append(h, b, docs, a);
+      out.appendChild(d);
+    });
+  } catch (err) {
+    out.textContent = "Something went wrong (" + err.message + "). Please try again.";
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
