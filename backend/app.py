@@ -66,7 +66,9 @@ def health():
 def match_route():
     student = request.get_json(force=True) or {}
     return jsonify({"matches": match(load_schemes(), student)})
-    SETUP_SQL = """
+
+
+SETUP_SQL = """
 CREATE TABLE schemes (
   id INTEGER PRIMARY KEY,
   name TEXT,
@@ -91,6 +93,7 @@ INSERT INTO rules (scheme_id, field, operator, value) VALUES
 (2, 'category', 'in', 'SC'),
 (2, 'income', '<=', '250000');
 """
+
 
 @app.route("/setup-once", methods=["POST"])
 def setup_once():
